@@ -1,21 +1,13 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-
-import { getTest } from "./functions/test";
+import Button from "./components/Button/Button.jsx";
+import chartIcon from "./assets/chart.png";
+import Box from "./components/Box/Box.jsx";
 
 function App() {
-  const [data, setData] = useState("Hello World!");
-
-  useEffect(() => {
-    getTest()
-      .then((res) => {
-        setData(res.message);
-      })
-      .catch((err) => console.log(err));
-  }, []);
   return (
     <div className="App">
-      <h1>{data}</h1>
+      <Box />
     </div>
   );
 }
