@@ -1,12 +1,14 @@
 .box {
   border: 2px solid;
   max-width: 20vw;
-  height: 10vh;
+  height: 20vh;
   border-radius: 20px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   padding: 14px;
+  background-color: #fff;
+  margin: 2%;
 }
 
 .boxIcon {
@@ -14,9 +16,16 @@
   height: auto;
   background-color: #fff;
   border: none;
+  mix-blend-mode: multiply;
+  padding-top: 5px;
 }
 
 .boxIconImg {
   height: 3vh;
   width: 2vw;
+}
+
+h1 {
+  font-size: 84px;
+  align-self: center;
 }

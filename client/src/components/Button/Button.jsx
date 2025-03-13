@@ -1,13 +1,17 @@
-import styles from "./Button.module.css";
-
-const Button = ({ isOutline, icon, text, onClick }) => {
+const Button = ({ icon, onClick }) => {
   return (
     <button
-      onClick={onClick}
-      className={isOutline ? styles.outline_btn : styles.primary_btn}
+      onClick={(e) => {
+        e.stopPropagation();
+        console.log("✅ Button clicked");
+        if (onClick) {
+          onClick();
+        } else {
+          console.error("❌ onClick function is undefined!");
+        }
+      }}
     >
-      {icon && <img src={icon} alt="Button Icon" className={styles.icon} />}
-      {text}
+      <img src={icon} alt="Graph" />
     </button>
   );
 };
