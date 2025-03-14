@@ -1,3 +1,6 @@
+import React from "react";
+import styles from "./Button.module.css";
+
 const Button = ({ icon, onClick }) => {
   return (
     <button
@@ -11,7 +14,7 @@ const Button = ({ icon, onClick }) => {
         }
       }}
     >
-      <img src={icon} alt="Graph" />
+      <img src={icon} alt="Graph" className={styles.icon} />
     </button>
   );
 };

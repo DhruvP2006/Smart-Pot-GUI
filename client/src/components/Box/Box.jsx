@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react"; // Remove useRef if not used
 import { io } from "socket.io-client";
 import Button from "../Button/Button";
 import chartIcon from "./../../assets/chart.png";
