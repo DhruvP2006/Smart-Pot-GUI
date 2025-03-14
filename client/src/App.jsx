@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import Box from "./components/Box/Box.jsx";
 import GraphModal from "./components/GraphModal/GraphModal.jsx";
+import "./App.css";
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);

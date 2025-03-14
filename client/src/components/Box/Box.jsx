@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react"; // Remove useRef if not used
 import { io } from "socket.io-client";
 import Button from "../Button/Button";
 import chartIcon from "./../../assets/chart.png";
-// import tempIcon from "./../../assets/thermometer.png"; // Temp icon
-// import humidityIcon from "./../../assets/drop.png"; // Humidity icon
+import tempIcon from "./../../assets/temperature.png";
+import humidityIcon from "./../../assets/humidity.png";
 import styles from "./Box.module.css";
 
 const socket = io("http://localhost:8080"); // Adjust if needed
@@ -22,16 +22,15 @@ const Box = ({ type, onOpenGraph }) => {
   }, [type]);
 
   // Set icon & label based on type
-  // const icon = type === "temperature" ? tempIcon : humidityIcon;
+  const icon = type === "temperature" ? tempIcon : humidityIcon;
   const label = type === "temperature" ? "Temperature" : "Humidity";
 
   return (
     <div className={styles.box}>
       <div className={styles.boxIcon}>
-        {/* <img src={icon} alt={label} className={styles.boxIconImg} /> */}
+        <img src={icon} alt={label} className={styles.boxIconImg} />
       </div>
       <h2>{label}</h2>
-      <h1>{value}</h1>
       {/* Button click triggers the graph modal */}
       <Button
         icon={chartIcon}
@@ -46,6 +45,7 @@ const Box = ({ type, onOpenGraph }) => {
           }
         }}
       />
+      <h1 className={styles.value}>{value}</h1>
     </div>
   );
 };
