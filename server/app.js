@@ -4,8 +4,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { get } = require('http');
 
-const testRouter = require('./routes/test');
-
 const app = express();
 app.use(cors());
 // 1) MIDDLEWARES

@@ -18,6 +18,8 @@ function App() {
     <div className="App">
       <Box type="temperature" onOpenGraph={openGraph} />
       <Box type="humidity" onOpenGraph={openGraph} />
+      <Box type="moisture" onOpenGraph={openGraph} />
+      <Box type="Flow" onOpenGraph={openGraph} />
       <GraphModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
