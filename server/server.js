@@ -29,6 +29,8 @@ const sensorSchema = new mongoose.Schema({
   moistureAnalog: Number,
   moistureDigital: String,
   luminance: Number,
+  flowRate: Number, // Instantaneous flow rate (L/min)
+  totalFlow: Number, // Total water consumption in last 24 hours
   timestamp: { type: Date, default: Date.now },
 });
 
@@ -64,6 +66,7 @@ app.post('/api/data', async (req, res) => {
       moistureAnalog,
       moistureDigital,
       luminance,
+      flowRate,
     } = data;
 
     if (
@@ -71,13 +74,35 @@ app.post('/api/data', async (req, res) => {
       humidity === undefined ||
       moistureAnalog === undefined ||
       moistureDigital === undefined ||
-      luminance === undefined
+      luminance === undefined ||
+      flowRate === undefined
     ) {
       console.error('❌ Missing required fields:', data);
       return res.status(400).json({ error: 'Missing required sensor data' });
     }
 
     const formattedMoistureDigital = moistureDigital === 1 ? 'Wet' : 'Dry';
+
+    // 🔹 Calculate total water consumption for the last 24 hours
+    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const pastData = await SensorData.find(
+      { timestamp: { $gte: last24Hours } },
+      'flowRate timestamp'
+    );
+
+    let totalFlow = 0;
+    if (pastData.length > 1) {
+      for (let i = 1; i < pastData.length; i++) {
+        const duration =
+          (pastData[i].timestamp - pastData[i - 1].timestamp) / (1000 * 60); // Convert ms to minutes
+        totalFlow += (pastData[i - 1].flowRate || 0) * duration;
+      }
+    }
+
+    // 🔹 Ensure totalFlow is not negative
+    totalFlow = Math.max(0, parseFloat(totalFlow.toFixed(1)));
+
+    console.log(`💧 Calculated total water consumption: ${totalFlow} L`);
 
     // 🔹 Emit real-time data
     io.emit('sensorData', {
@@ -86,6 +111,8 @@ app.post('/api/data', async (req, res) => {
       moistureAnalog,
       moistureDigital: formattedMoistureDigital,
       luminance,
+      flowRate,
+      totalFlow,
     });
 
     const currentTime = Date.now();
@@ -99,6 +126,8 @@ app.post('/api/data', async (req, res) => {
         moistureAnalog,
         moistureDigital: formattedMoistureDigital,
         luminance,
+        flowRate,
+        totalFlow,
         timestamp: new Date(),
       },
       { upsert: true, new: true }
@@ -106,14 +135,16 @@ app.post('/api/data', async (req, res) => {
 
     console.log('✅ Latest data updated');
 
-    // 🔹 Save only every 15 minutes for graph
-    if (currentTime - lastSavedTime >= 15 * 60 * 1000) {
+    // 🔹 Save new entry every 15 minutes for graph
+    if (currentTime - lastSavedTime >= 1000) {
       await SensorData.create({
         temperature,
         humidity,
         moistureAnalog,
         moistureDigital: formattedMoistureDigital,
         luminance,
+        flowRate,
+        totalFlow,
       });
       lastSavedTime = currentTime;
       console.log('✅ Data saved for graph');
@@ -146,4 +177,4 @@ app.get('/api/graph-data', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
