@@ -23,12 +23,15 @@ const sensorLabels = {
   temperature: "Temperature (°C)",
   humidity: "Humidity (%)",
   moistureAnalog: "Soil Moisture (%)",
+  moistureDigital: "Soil Moisture (Digital)", // ✅ Add this
   flowRate: "Flow Rate (L/min)",
-  totalFlow: "Total Flow (L)", // 🔹 Added totalFlow label
+  totalFlow: "Total Flow (L)",
   luminance: "Luminance (%)",
 };
 
 const GraphModal = ({ isOpen, onClose, type }) => {
+  console.log("Modal Opened - Type:", type, "Label:", sensorLabels[type]);
+
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -84,10 +87,7 @@ const GraphModal = ({ isOpen, onClose, type }) => {
               <XAxis dataKey="name" />
               <YAxis />
               <Tooltip />
-              <Bar
-                dataKey="value"
-                fill={sensorColors[type] || "#7f8c8d"} // Default color if type is missing
-              />
+              <Bar dataKey="value" fill={sensorColors[type] || "#7f8c8d"} />
             </BarChart>
           </ResponsiveContainer>
         ) : (

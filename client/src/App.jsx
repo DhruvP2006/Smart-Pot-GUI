@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Box from "./components/Box/Box.jsx";
 import GraphModal from "./components/GraphModal/GraphModal.jsx";
+import Slider from "./components/Slider/Slider.jsx";
 import "./App.css";
 
 function App() {
@@ -15,25 +16,24 @@ function App() {
 
   return (
     <div className="App">
-      {/* Render all sensor boxes dynamically */}
       {[
         "temperature",
         "humidity",
         "moistureAnalog",
         "moistureDigital",
-        "flowRate", // 🔹 Added flowRate
-        "totalFlow", // 🔹 Added totalFlow
+        "flowRate",
+        "totalFlow",
         "luminance",
       ].map((sensorType) => (
         <Box key={sensorType} type={sensorType} onOpenGraph={openGraph} />
       ))}
 
-      {/* Graph Modal for selected sensor */}
       <GraphModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         type={selectedType}
       />
+      <Slider />
     </div>
   );
 }

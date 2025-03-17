@@ -4,13 +4,11 @@ import styles from "./Button.module.css";
 const Button = ({ icon, onClick }) => {
   return (
     <button
+      className={styles.button}
       onClick={(e) => {
         e.stopPropagation();
-        console.log("✅ Button clicked");
         if (onClick) {
           onClick();
-        } else {
-          console.error("❌ onClick function is undefined!");
         }
       }}
     >

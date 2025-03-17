@@ -4,14 +4,14 @@ import Button from "../Button/Button";
 import chartIcon from "./../../assets/chart.png";
 import tempIcon from "./../../assets/temperature.png";
 import humidityIcon from "./../../assets/humidity.png";
-import moistureAnalogIcon from "./../../assets/chart.png";
-import moistureDigitalIcon from "./../../assets/chart.png";
-import flowRateIcon from "./../../assets/FlowMeter.png";
-import totalFlowIcon from "./../../assets/FlowMeter.png"; // 🔹 New Icon
+import moistureAnalogIcon from "./../../assets/moisture.png";
+import moistureDigitalIcon from "./../../assets/moisture.png";
+import flowRateIcon from "./../../assets/flowrate.png";
+import totalFlowIcon from "./../../assets/waterConsumed.png";
 import luminanceIcon from "./../../assets/luminance.png";
 import styles from "./Box.module.css";
 
-const socket = io("http://localhost:8080"); // Adjust if needed
+const socket = io("http://localhost:8080");
 
 const sensorIcons = {
   temperature: tempIcon,
@@ -19,7 +19,7 @@ const sensorIcons = {
   moistureAnalog: moistureAnalogIcon,
   moistureDigital: moistureDigitalIcon,
   flowRate: flowRateIcon,
-  totalFlow: totalFlowIcon, // 🔹 Added totalFlow icon
+  totalFlow: totalFlowIcon,
   luminance: luminanceIcon,
 };
 
@@ -29,7 +29,7 @@ const sensorLabels = {
   moistureAnalog: "Soil Moisture (%)",
   moistureDigital: "Soil Moisture",
   flowRate: "Flow Rate (mL/min)",
-  totalFlow: "Total Flow (mL)", // 🔹 Added totalFlow label
+  totalFlow: "Water Consumed (mL)",
   luminance: "Luminance (%)",
 };
 
@@ -51,13 +51,13 @@ const Box = ({ type, onOpenGraph }) => {
     <div className={styles.box}>
       <div className={styles.boxIcon}>
         <img
-          src={sensorIcons[type] || tempIcon} // Default icon
+          src={sensorIcons[type] || tempIcon}
           alt={sensorLabels[type] || "Sensor"}
           className={styles.boxIconImg}
         />
       </div>
       <h2>{sensorLabels[type] || "Sensor Data"}</h2>
-      {/* Button click triggers the graph modal */}
+
       <Button
         icon={chartIcon}
         onClick={() => {

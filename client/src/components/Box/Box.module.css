@@ -1,34 +1,42 @@
 .box {
-  border: 2px solid;
-  max-width: 20vw;
-  height: 20vh;
+  width: 25vw; /* Increased width */
+  height: 22vh; /* Increased height */
   border-radius: 20px;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  justify-content: space-between;
-  align-items: flex-start;
+  grid-template-columns: 1fr 2fr 1fr;
+  justify-items: center;
+  align-items: center;
   padding: 14px;
-  background-color: #fff;
+  background-color: #023e8a;
+  color: #fff;
   margin: 2%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .boxIcon {
-  width: 2vw;
-  height: auto;
-  background-color: #fff;
+  width: 3vw; /* Slightly increased */
+  height: 3vw; /* Maintain aspect ratio */
   border: none;
-  mix-blend-mode: multiply;
-  padding-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .boxIconImg {
-  height: 3vh;
-  width: 2vw;
+  width: 100%; /* Ensure it fills the parent */
+  height: 100%;
+  object-fit: contain;
 }
 
 .value {
-  font-size: 84px;
+  font-size: 64px;
   align-self: center;
   grid-column: 1/-1;
   justify-self: center;
+}
+
+h2 {
+  font-size: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

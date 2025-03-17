@@ -1,0 +1,50 @@
+.moistureContainer {
+  width: 25vw; /* Increased width */
+  height: 22vh; /* Increased height */
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 30%;
+  justify-items: center;
+  align-items: center;
+  padding: 14px;
+  background-color: #023e8a;
+  color: #fff;
+  margin: 2%;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+}
+
+h2 {
+  color: #fff;
+}
+
+.slider {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 8px;
+  border-radius: 5px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.slider:hover {
+  opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #0077b6;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+p {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
