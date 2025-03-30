@@ -1,40 +1,21 @@
-import React, { useState } from "react";
-import Box from "./components/Box/Box.jsx";
-import GraphModal from "./components/GraphModal/GraphModal.jsx";
-import Slider from "./components/Slider/Slider.jsx";
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar.jsx";
+import Home from "./Pages/Home/Home.jsx";
+import Login from "./Pages/Login/Login.jsx";
+import Register from "./Pages/Register/Register.jsx";
+
 import "./App.css";
 
 function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
-
-  const openGraph = (type) => {
-    console.log("📊 Graph Button Clicked - Type:", type);
-    setSelectedType(type);
-    setIsModalOpen(true);
-  };
-
   return (
-    <div className="App">
-      {[
-        "temperature",
-        "humidity",
-        "moistureAnalog",
-        "moistureDigital",
-        "flowRate",
-        "totalFlow",
-        "luminance",
-      ].map((sensorType) => (
-        <Box key={sensorType} type={sensorType} onOpenGraph={openGraph} />
-      ))}
-
-      <GraphModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        type={selectedType}
-      />
-      <Slider />
-    </div>
+    <>
+      <Navbar />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </>
   );
 }
 
