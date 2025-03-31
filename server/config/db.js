@@ -1,14 +1,15 @@
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 
-const DB = process.env.MONGO_URI.replace(
+dotenv.config({ path: './config.env' });
+
+const DB = process.env.DATABASE.replace(
   '<db_password>',
   process.env.DATABASE_PASSWORD
 );
 
-mongoose
-  .connect(DB, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch((err) => console.error('❌ MongoDB Connection Error:', err));
+mongoose.connect(DB).then(() => {
+  console.log('DB connection successful!');
+});
+
+module.exports = mongoose;
