@@ -5,7 +5,7 @@ const mongoose = require('./config/db');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
-
+const cookieParser = require('cookie-parser');
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -27,6 +27,8 @@ app.use(
 
 // ✅ JSON and text parsing (remove duplicate)
 app.use(express.json());
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: false }));
 app.use(express.text());
 
 // ✅ Route handlers

@@ -1,0 +1,77 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #f9fbfd;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.box {
+  width: 100%;
+  max-width: 400px;
+  padding: 2.5rem;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.box h2 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-size: 1.8rem;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: #fefefe;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  border-color: #4a90e2;
+  background-color: #fff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+}
+
+.button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  background-color: #4a90e2;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.button:hover {
+  background-color: #3a78c2;
+}
+
+.registerLink {
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.registerLink a {
+  color: #4a90e2;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.registerLink a:hover {
+  text-decoration: underline;
+}
