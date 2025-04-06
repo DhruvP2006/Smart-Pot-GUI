@@ -20,12 +20,16 @@ const ChatBot = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include", // In case you're using cookies
-        body: JSON.stringify({ message: input }),
-      });
+      const res = await fetch(
+        "http://localhost:8080/api/chat" ||
+          `${process.env.REACT_APP_BACKEND_URL}/api/chat`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include", // In case you're using cookies
+          body: JSON.stringify({ message: input }),
+        }
+      );
 
       const data = await res.json();
       const botReply = data.response || "⚠️ No response.";
@@ -34,7 +38,10 @@ const ChatBot = () => {
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
       console.error("Error communicating with Gemini:", err);
-      const errorMsg = { sender: "bot", text: "⚠️ Error fetching response." };
+      const errorMsg = {
+        sender: "bot",
+        text: "⚠️ Error fetching response.",
+      };
       setMessages((prev) => [...prev, errorMsg]);
     } finally {
       setLoading(false);
