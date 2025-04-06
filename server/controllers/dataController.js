@@ -1,4 +1,4 @@
-const SensorData = require('../models/SensorData');
+const SensorData = require('../models/sensorData');
 
 // 🔹 POST New Sensor Data
 exports.postSensorData = async (req, res) => {
