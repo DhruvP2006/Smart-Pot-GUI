@@ -1,4 +1,4 @@
-const SensorData = require('../models/SensorData');
+const SensorData = require('../models/sensorData');
 const Threshold = require('../models/threshold');
 const { io } = require('../server');
 
