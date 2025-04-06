@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar/Navbar.jsx";
 import Home from "./Pages/Home/Home.jsx";
 import Login from "./Pages/Login/Login.jsx";
 import Register from "./Pages/Register/Register.jsx";
+import ChatBot from "./Pages/ChatBot/ChatBot.jsx";
 import axios from "axios";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
@@ -20,6 +21,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/chat" element={<ChatBot />} />
       </Routes>
     </UserContextProvider>
   );

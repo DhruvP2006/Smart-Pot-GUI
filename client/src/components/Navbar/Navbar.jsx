@@ -1,12 +1,34 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import styles from "./Navbar.module.css";
 
 function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <nav>
-      <Link to="/">Home</Link>
-      <Link to="/Register">Register</Link>
-      <Link to="/Login">Login</Link>
+    <nav className={styles.navbar}>
+      <div className={styles.logo}>SmartPot 🌿</div>
+      <button
+        className={styles.toggle}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle menu"
+      >
+        ☰
+      </button>
+      <div className={`${styles.links} ${isOpen ? styles.show : ""}`}>
+        <Link to="/" onClick={() => setIsOpen(false)}>
+          Home
+        </Link>
+        <Link to="/Register" onClick={() => setIsOpen(false)}>
+          Register
+        </Link>
+        <Link to="/Login" onClick={() => setIsOpen(false)}>
+          Login
+        </Link>
+        <Link to="/chat" onClick={() => setIsOpen(false)}>
+          Talk with Your Plant
+        </Link>
+      </div>
     </nav>
   );
 }

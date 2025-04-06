@@ -1,5 +1,17 @@
 const SensorData = require('../models/SensorData');
 
+// 🔹 POST New Sensor Data
+exports.postSensorData = async (req, res) => {
+  try {
+    const newData = new SensorData(req.body);
+    await newData.save();
+    res.status(201).json({ message: 'Sensor data saved successfully' });
+  } catch (err) {
+    console.error('Error saving sensor data:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // 🔹 Get Latest Sensor Data
 exports.getLatestData = async (req, res) => {
   try {

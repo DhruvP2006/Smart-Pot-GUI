@@ -1,47 +1,52 @@
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
+
 const express = require('express');
 const mongoose = require('./config/db');
 const cors = require('cors');
 const http = require('http');
 const { Server } = require('socket.io');
 const cookieParser = require('cookie-parser');
+
 const app = express();
 const server = http.createServer(app);
+
+// ✅ Create io instance and export it
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000', // Correct origin
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
 });
+module.exports.io = io; // ✅ This is the fix: export io to use it in controller
 
-// ✅ Proper CORS configuration
+// Middleware
 app.use(
   cors({
-    origin: 'http://localhost:3000', // Allow frontend
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
 );
-
-// ✅ JSON and text parsing (remove duplicate)
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.text());
 
-// ✅ Route handlers
+// Routes
 app.use('/api/data', require('./routes/dataRoutes'));
 app.use('/api/sensors', require('./routes/sensorRoutes'));
 app.use('/', require('./routes/authRoutes'));
+app.use('/api/chat', require('./routes/chatRoutes'));
+app.use('/api/gemini', require('./routes/geminiRoutes'));
 
-// ✅ Socket connection
+// Socket.io connection
 io.on('connection', (socket) => {
   console.log('🔗 Client connected');
   socket.on('disconnect', () => console.log('❌ Client disconnected'));
 });
 
-// ✅ Server running
+// Start server
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));

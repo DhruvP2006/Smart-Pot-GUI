@@ -1,7 +1,22 @@
 const SensorData = require('../models/SensorData');
-const { io } = require('../server'); // Importing Socket
+const Threshold = require('../models/threshold');
+const { io } = require('../server');
 
 let lastSavedTime = 0;
+let cachedThreshold = null; // Loaded from DB on first access
+
+// 🔹 Get threshold from DB or fallback
+const getThresholdFromDB = async () => {
+  if (cachedThreshold !== null) return cachedThreshold;
+
+  let thresholdDoc = await Threshold.findOne();
+  if (!thresholdDoc) {
+    thresholdDoc = await Threshold.create({ moistureThreshold: 50 });
+  }
+
+  cachedThreshold = thresholdDoc.moistureThreshold;
+  return cachedThreshold;
+};
 
 // 🔹 Post Sensor Data
 exports.postSensorData = async (req, res) => {
@@ -40,7 +55,7 @@ exports.postSensorData = async (req, res) => {
 
     const formattedMoistureDigital = moistureDigital === 1 ? 'Wet' : 'Dry';
 
-    // 🔹 Calculate total water consumption for last 24 hours
+    // 🔹 Calculate total flow for 24 hours
     const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const pastData = await SensorData.find(
       { timestamp: { $gte: last24Hours } },
@@ -57,7 +72,9 @@ exports.postSensorData = async (req, res) => {
     }
     totalFlow = Math.max(0, parseFloat(totalFlow.toFixed(1)));
 
-    // 🔹 Emit real-time data
+    const currentTime = Date.now();
+
+    // 🔹 Emit live sensor data
     io.emit('sensorData', {
       temperature,
       humidity,
@@ -68,9 +85,11 @@ exports.postSensorData = async (req, res) => {
       totalFlow,
     });
 
-    const currentTime = Date.now();
+    // 🔹 Emit threshold too (ESP32 or UI might listen)
+    const thresholdValue = await getThresholdFromDB();
+    io.emit('thresholdUpdate', { moistureThreshold: thresholdValue });
 
-    // 🔹 Update latest data (overwrite previous)
+    // 🔹 Update current record
     await SensorData.findOneAndUpdate(
       {},
       {
@@ -86,7 +105,7 @@ exports.postSensorData = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // 🔹 Save data every 15 minutes for graph
+    // 🔹 Save for graph (every 15 mins)
     if (currentTime - lastSavedTime >= 15 * 60 * 1000) {
       await SensorData.create({
         temperature,
@@ -104,5 +123,44 @@ exports.postSensorData = async (req, res) => {
   } catch (err) {
     console.error('❌ Server Error:', err);
     res.status(500).json({ error: err.message });
+  }
+};
+
+// 🔹 Get Moisture Threshold
+exports.getThreshold = async (req, res) => {
+  try {
+    const threshold = await getThresholdFromDB();
+    res.json({ moistureThreshold: threshold });
+  } catch (err) {
+    res.status(500).json({ error: 'Error fetching threshold' });
+  }
+};
+
+// 🔹 Save Moisture Threshold
+exports.saveThreshold = async (req, res) => {
+  try {
+    const { moistureThreshold: newThreshold } = req.body;
+
+    if (newThreshold === undefined) {
+      return res.status(400).json({ error: 'No threshold provided' });
+    }
+
+    let thresholdDoc = await Threshold.findOne();
+    if (thresholdDoc) {
+      thresholdDoc.moistureThreshold = newThreshold;
+      await thresholdDoc.save();
+    } else {
+      await Threshold.create({ moistureThreshold: newThreshold });
+    }
+
+    cachedThreshold = newThreshold;
+
+    // Broadcast new threshold
+    io.emit('thresholdUpdate', { moistureThreshold: newThreshold });
+
+    res.json({ message: 'Threshold updated', moistureThreshold: newThreshold });
+  } catch (err) {
+    console.error('Error updating threshold:', err);
+    res.status(500).json({ error: 'Error updating threshold' });
   }
 };

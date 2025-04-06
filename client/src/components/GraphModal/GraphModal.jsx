@@ -39,12 +39,12 @@ const GraphModal = ({ isOpen, onClose, type }) => {
     if (isOpen && type) {
       setIsLoading(true);
       axios
-        .get("http://localhost:8080/api/graph-data")
+        .get("http://localhost:8080/api/data/graph-data")
         .then((response) => {
           const formattedData = Array.isArray(response.data)
             ? response.data.map((item) => ({
                 name: new Date(item.timestamp).toLocaleTimeString(),
-                value: item[type] !== undefined ? item[type] : null, // Handle missing values
+                value: item[type] !== undefined ? item[type] : null,
               }))
             : [];
           setData(

@@ -1,1 +1,66 @@
+.navbar {
+  background-color: #2f855a;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: "Segoe UI", sans-serif;
+}
 
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.toggle {
+  display: none;
+  font-size: 1.8rem;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.links {
+  display: flex;
+  gap: 20px;
+}
+
+.links a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.links a:hover {
+  color: #d3f9d8;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .toggle {
+    display: block;
+  }
+
+  .links {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    background-color: #2f855a;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 15px 0;
+    display: none;
+  }
+
+  .show {
+    display: flex;
+  }
+}
