@@ -9,6 +9,8 @@ import "./App.css";
 import { Toaster } from "react-hot-toast";
 import { UserContextProvider } from "./context/userContext.jsx";
 
+console.log("REACT_APP_BACKEND_URL:", process.env.REACT_APP_BACKEND_URL);
+
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_URL;
 axios.defaults.withCredentials = true;
 

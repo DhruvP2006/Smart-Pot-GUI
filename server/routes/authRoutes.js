@@ -8,7 +8,12 @@ const {
   getProfile,
 } = require('./../controllers/authController');
 
-router.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+const allowedOrigins = [
+  'https://smartpot-eta.vercel.app/', // your frontend
+  'http://localhost:3000', // optional for local dev
+];
+
+router.use(cors({ credentials: true, origin: allowedOrigins }));
 
 router.get('/', test);
 router.post('/register', registerUser);
