@@ -12,7 +12,7 @@ const app = express();
 const server = http.createServer(app);
 
 const allowedOrigins = [
-  'https://smartpot-eta.vercel.app/', // your frontend
+  'https://smartpot-eta.vercel.app', // your frontend
   'http://localhost:3000', // optional for local dev
 ];
 
