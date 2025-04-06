@@ -19,7 +19,7 @@ const allowedOrigins = [
 // ✅ Create io instance and export it
 const io = new Server(server, {
   cors: {
-    origin: 'https://smartpot-eta.vercel.app/',
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
@@ -30,7 +30,7 @@ module.exports.io = io; // ✅ This is the fix: export io to use it in controlle
 // Middleware
 app.use(
   cors({
-    origin: 'https://smartpot-eta.vercel.app/',
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
