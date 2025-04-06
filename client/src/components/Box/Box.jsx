@@ -11,7 +11,9 @@ import totalFlowIcon from "./../../assets/waterConsumed.png";
 import luminanceIcon from "./../../assets/luminance.png";
 import styles from "./Box.module.css";
 
-const socket = io("http://localhost:8080");
+const socket = io(process.env.REACT_APP_BACKEND_URL, {
+  withCredentials: true,
+});
 
 const sensorIcons = {
   temperature: tempIcon,
