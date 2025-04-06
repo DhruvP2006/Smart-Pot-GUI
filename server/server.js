@@ -11,10 +11,16 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const server = http.createServer(app);
 
+const allowedOrigins = [
+  'https://smartpot-eta.vercel.app/', // your frontend
+  'http://localhost:3000', // optional for local dev
+];
+
 // ✅ Create io instance and export it
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: allowedOrigins,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
@@ -24,7 +30,8 @@ module.exports.io = io; // ✅ This is the fix: export io to use it in controlle
 // Middleware
 app.use(
   cors({
-    origin: 'http://localhost:3000',
+    origin: allowedOrigins,
+    credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   })
