@@ -20,7 +20,7 @@ const ChatBot = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8080/api/chat", {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", // In case you're using cookies
