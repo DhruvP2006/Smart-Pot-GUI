@@ -24,6 +24,12 @@ async function sendMessageToGemini(userId, message) {
       };
     }
 
+    console.log('Sensor data debug:', {
+      temp: latest.temperature,
+      hum: latest.humidity,
+      moist: latest.moistureAnalog,
+    });
+
     const prompt = `
 📊 Latest Sensor Readings:
 - 🌡️ Temperature: ${latest.temperature ?? 'N/A'} °C
