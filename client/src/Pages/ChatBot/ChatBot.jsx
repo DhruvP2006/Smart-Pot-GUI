@@ -20,24 +20,39 @@ const ChatBot = () => {
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "http://localhost:8080/api/chat" ||
-          `${process.env.REACT_APP_BACKEND_URL}/api/chat`,
+      // 🔹 Step 1: Fetch the latest ESP32 sensor data
+      const sensorRes = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/data`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include", // In case you're using cookies
-          body: JSON.stringify({ message: input }),
+          credentials: "include",
         }
       );
+      const sensorData = await sensorRes.json();
+
+      // 🔹 Step 2: Combine user's input with sensor context
+      const combinedMessage = `
+You are a Smart Pot assistant. Here's the latest sensor data:
+- Temperature: ${sensorData.temperature}°C
+- Humidity: ${sensorData.humidity}%
+- Moisture: ${sensorData.moisture}%
+Using this data, answer the following question: "${input}"
+    `;
+
+      // 🔹 Step 3: Send to Gemini
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ message: combinedMessage }),
+      });
 
       const data = await res.json();
-      const botReply = data.response || "⚠️ No response.";
+      const botReply = data.response || "⚠️ No response from Gemini.";
 
       const botMsg = { sender: "bot", text: botReply };
       setMessages((prev) => [...prev, botMsg]);
     } catch (err) {
-      console.error("Error communicating with Gemini:", err);
+      console.error("Chatbot error:", err);
       const errorMsg = {
         sender: "bot",
         text: "⚠️ Error fetching response.",
