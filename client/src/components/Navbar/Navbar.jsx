@@ -19,14 +19,17 @@ function Navbar() {
         <Link to="/" onClick={() => setIsOpen(false)}>
           Home
         </Link>
-        <Link to="/Register" onClick={() => setIsOpen(false)}>
+        {/* <Link to="/Register" onClick={() => setIsOpen(false)}>
           Register
         </Link>
         <Link to="/Login" onClick={() => setIsOpen(false)}>
           Login
-        </Link>
+        </Link> */}
         <Link to="/chat" onClick={() => setIsOpen(false)}>
           Talk with Your Plant
+        </Link>
+        <Link to="/login" onClick={() => setIsOpen(false)}>
+          Logout
         </Link>
       </div>
     </nav>
