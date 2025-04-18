@@ -11,6 +11,54 @@ const ChatBot = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const streamBotReply = async (fullText) => {
+    const words = fullText.split(" ");
+    let currentText = "";
+
+    for (let i = 0; i < words.length; i++) {
+      const word = words[i];
+
+      // Capture the current text for this iteration
+      const newText = currentText + word + " ";
+
+      // Use a closure-safe timeout
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          setMessages((prev) => {
+            const updated = [...prev];
+            // If last bot message is streaming, update it; otherwise, add new
+            if (
+              updated.length &&
+              updated[updated.length - 1].sender === "bot" &&
+              updated[updated.length - 1].text.endsWith("…")
+            ) {
+              updated[updated.length - 1].text = newText + "…";
+            } else {
+              updated.push({ sender: "bot", text: newText + "…" });
+            }
+            return updated;
+          });
+          resolve();
+        }, 25);
+      });
+
+      currentText = newText; // update after delay
+    }
+
+    // Replace last "…"-ending message with the complete one (no dots)
+    setMessages((prev) => {
+      const updated = [...prev];
+      if (
+        updated.length &&
+        updated[updated.length - 1].sender === "bot" &&
+        updated[updated.length - 1].text.endsWith("…")
+      ) {
+        updated[updated.length - 1].text = currentText.trim();
+      }
+      return updated;
+    });
+  };
+
   const sendMessage = async () => {
     if (input.trim() === "") return;
 
@@ -44,8 +92,11 @@ const ChatBot = () => {
       const data = await res.json();
       const botReply = data.response || "⚠️ No response from Gemini.";
 
-      const botMsg = { sender: "bot", text: botReply };
-      setMessages((prev) => [...prev, botMsg]);
+      // const botMsg = { sender: "bot", text: botReply };
+
+      // setMessages((prev) => [...prev, botMsg]);
+      await streamBotReply(botReply);
+      setLoading(false);
     } catch (err) {
       console.error("Chatbot error:", err);
       const errorMsg = {
