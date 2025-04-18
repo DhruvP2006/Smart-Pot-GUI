@@ -13,6 +13,8 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   'https://smartpot-eta.vercel.app', // your frontend
+  'https://smartpot-git-main-dhruv-pankhanias-projects.vercel.app',
+  'https://smart-m62ouwvjh-dhruv-pankhanias-projects.vercel.app',
   'http://localhost:3000', // optional for local dev
 ];
 
