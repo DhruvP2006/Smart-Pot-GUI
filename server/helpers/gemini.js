@@ -4,93 +4,81 @@ require('dotenv').config();
 const GEMINI_API_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent';
 
-// Helper function to properly handle missing/empty data
 function formatSensorValue(value, unit = '') {
-  return value === undefined || value === null || value === ''
+  // Handle undefined/null/empty strings, but allow 0 as valid
+  return value === undefined ||
+    value === null ||
+    value === '' ||
+    value === 'undefined'
     ? 'N/A'
     : `${value}${unit}`;
 }
 
 async function sendMessageToGemini(userId, message) {
   try {
-    // Fetch latest Smart Pot sensor data
     const sensorRes = await axios.get(
       process.env.BACKEND_URL
         ? `${process.env.BACKEND_URL}/api/data`
         : 'https://smart-pot-l9l9.onrender.com/api/data'
     );
 
-    // Ensure we have a proper data object
+    // Normalize data: handle both array and object responses
     const latest = Array.isArray(sensorRes.data)
       ? sensorRes.data[0]
-      : typeof sensorRes.data === 'object'
-      ? sensorRes.data
-      : {};
+      : sensorRes.data;
 
-    console.log('Latest Smart Pot Data:', latest);
+    // Debug log to verify raw data
+    console.log('Raw API Response:', JSON.stringify(latest, null, 2));
 
-    // Check if we got any usable data
-    const hasData = Object.values(latest).some(
-      (val) => val !== undefined && val !== null && val !== ''
+    // Validate critical sensors
+    const criticalSensorsMissing = [
+      'temperature',
+      'humidity',
+      'moistureAnalog',
+    ].some(
+      (key) =>
+        latest[key] === undefined || latest[key] === null || latest[key] === ''
     );
 
-    if (!hasData) {
-      return {
-        response:
-          '❌ No recent sensor data available. Please check:\n' +
-          '1. Is your Smart Pot powered on?\n' +
-          '2. Is it connected to WiFi?\n' +
-          '3. Try restarting the device if problems persist.',
-      };
-    }
-
     const prompt = `
-📊 Latest Sensor Readings:
+📊 **Sensor Data** (Raw: ${JSON.stringify(latest)}):
 - 🌡️ Temperature: ${formatSensorValue(latest.temperature, '°C')}
 - 💧 Humidity: ${formatSensorValue(latest.humidity, '%')}
-- 🌿 Soil Moisture (Analog): ${formatSensorValue(latest.moistureAnalog, '%')}
-- 🚰 Moisture Status: ${formatSensorValue(latest.moistureDigital)}
-- 💡 Luminance: ${formatSensorValue(latest.luminance, ' lux')}
-- ⏳ Flow Rate: ${formatSensorValue(latest.flowRate, ' mL/min')}
-- 🌊 Total Water Flow: ${formatSensorValue(latest.totalFlow, ' mL')}
+- 🌿 Soil Moisture: ${formatSensorValue(
+      latest.moistureAnalog,
+      '%'
+    )} (Status: ${formatSensorValue(latest.moistureDigital)})
+- 💡 Light: ${formatSensorValue(latest.luminance, ' lux')}
+- 🚰 Water Flow: ${formatSensorValue(latest.flowRate, ' mL/min')}
 
-🧑‍🌾 User's question: "${message}"
+🔍 **User Query**: "${message}"
 
-Please analyze the plant's health based on the available sensor data. Follow these guidelines:
-1. First mention any missing data (shown as N/A)
-2. For available data:
-   - Moisture: "Dry" = needs water, "Wet" = sufficient
-   - Luminance: <100 lux = low, 100-1000 = moderate, >1000 = bright
-   - Temperature: >30°C may need attention
-3. Provide specific care suggestions based on current readings
-4. If critical data is missing, suggest troubleshooting steps
-5. Keep responses friendly, concise, and actionable
-
-Important: If soil moisture is "Dry" or <20%, recommend watering immediately!
+**Instructions for Gemini**:
+1. If any critical sensor (temperature/humidity/moisture) shows "N/A", FIRST explain how to troubleshoot it.
+2. For valid data:
+   - Soil moisture <10% → Urgent watering needed.
+   - Temperature >30°C → Risk of heat stress.
+   - Light <100 lux → Likely insufficient.
+3. Prioritize actionable steps. Never guess—flag missing data clearly.
 `;
 
     const geminiRes = await axios.post(
       `${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`,
       {
-        contents: [
-          {
-            role: 'user',
-            parts: [{ text: prompt }],
-          },
-        ],
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
       }
     );
 
-    const result =
-      geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
-
-    return { response: result };
-  } catch (error) {
-    console.error('Gemini error:', error.response?.data || error.message);
     return {
       response:
-        '⚠️ I encountered an issue processing your request. ' +
-        'Please try again later or check your device connection.',
+        geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text ||
+        'No response from Gemini.',
+    };
+  } catch (error) {
+    console.error('Full Error:', error);
+    return {
+      response:
+        '⚠️ **System Error**: Check backend connection. Sensors may be offline.',
     };
   }
 }
