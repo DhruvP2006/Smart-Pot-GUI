@@ -27,16 +27,11 @@ const ChatBot = () => {
           credentials: "include",
         }
       );
-      const sensorData = await sensorRes.json();
+      const sensorData = (await sensorRes.json())[0];
+      console.log(sensorData);
 
       // 🔹 Step 2: Combine user's input with sensor context
-      const combinedMessage = `
-You are a Smart Pot assistant. Here's the latest sensor data:
-- Temperature: ${sensorData.temperature}°C
-- Humidity: ${sensorData.humidity}%
-- Moisture: ${sensorData.moisture}%
-Using this data, answer the following question: "${input}"
-    `;
+      const combinedMessage = `Using the above data, answer the following question: "${input}"`;
 
       // 🔹 Step 3: Send to Gemini
       const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat`, {

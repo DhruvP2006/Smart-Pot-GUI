@@ -42,7 +42,7 @@ async function sendMessageToGemini(userId, message) {
 
 🧑‍🌾 User’s question: "${message}"
 
-Based on the above sensor data, respond with helpful insights about the plant’s health. Give actionable suggestions if needed. Keep the tone friendly and clear.
+Give actionable suggestions if needed. Keep the tone friendly and clear.
 `;
 
     const geminiRes = await axios.post(
