@@ -39,7 +39,7 @@ const GraphModal = ({ isOpen, onClose, type }) => {
     if (isOpen && type) {
       setIsLoading(true);
       axios
-        .get("http://localhost:8080/api/data/graph-data")
+        .get(`${process.env.REACT_APP_BACKEND_URL}/api/data/graph-data`)
         .then((response) => {
           const formattedData = Array.isArray(response.data)
             ? response.data.map((item) => ({
