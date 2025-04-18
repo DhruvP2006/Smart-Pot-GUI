@@ -1,140 +1,69 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 const axios = require('axios');
 require('dotenv').config();
 
-// Initialize Google Generative AI
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+const GEMINI_API_URL =
+  'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent';
 
-const chatConfig = {
-  generationConfig: {
-    responseMimeType: 'text/plain',
-  },
-  systemInstruction: {
-    parts: [
-      {
-        text: `You are a plant care assistant for a smart pot system. 
-      Provide clear, actionable advice based on sensor data. 
-      Keep responses friendly and concise. 
-      Never use markdown or code formatting.`,
-      },
-    ],
-  },
-};
-
-let chatSession;
-
-// Initialize chat session
-async function initializeChat() {
-  if (!chatSession) {
-    chatSession = model.startChat({
-      history: [
-        {
-          role: 'user',
-          parts: [{ text: 'Hello' }],
-        },
-        {
-          role: 'model',
-          parts: [
-            {
-              text: "I'm your plant care assistant. How can I help with your smart pot today?",
-            },
-          ],
-        },
-      ],
-      generationConfig: chatConfig.generationConfig,
-      systemInstruction: chatConfig.systemInstruction,
-    });
-  }
-  return chatSession;
-}
-
-// Helper function to format sensor values
-function formatSensorValue(value, unit = '') {
-  return value === undefined ||
-    value === null ||
-    value === '' ||
-    value === 'undefined'
-    ? 'N/A'
-    : `${value}${unit}`;
-}
-
-// Fetch sensor data from backend
-async function fetchSensorData() {
+async function sendMessageToGemini(userId, message) {
   try {
-    const sensorRes = await axios.get(
+    // Fetch latest Smart Pot sensor data
+    const sensorRes = await axios.get(`
       process.env.BACKEND_URL
-        ? `${process.env.BACKEND_URL}/api/data`
-        : 'https://smart-pot-l9l9.onrender.com/api/data'
-    );
+        ? ${process.env.BACKEND_URL}/api/data
+        : 'https://smart-pot-l9l9.onrender.com/api/data'`);
 
-    // Normalize data format
-    const latest = Array.isArray(sensorRes.data)
-      ? sensorRes.data[0]
-      : sensorRes.data;
+    const latest = Array.isArray(sensorRes.data) ? sensorRes.data[0] : null;
 
-    if (!latest || Object.keys(latest).length === 0) {
-      throw new Error('No sensor data received');
+    console.log('Latest Smart Pot Data:', latest);
+
+    if (!latest) {
+      return {
+        response:
+          "❌ Sorry, I couldn't retrieve your sensor data. Please check if the device is online.",
+      };
     }
 
-    console.log('Raw Sensor Data:', JSON.stringify(latest, null, 2));
+    console.log('Sensor data debug:', {
+      temp: latest.temperature,
+      hum: latest.humidity,
+      moist: latest.moistureAnalog,
+    });
 
-    return latest;
-  } catch (error) {
-    console.error('Sensor data fetch error:', error.message);
-    return null;
-  }
-}
+    const prompt = `
+📊 Latest Sensor Readings:
+- 🌡 Temperature: ${latest.temperature ?? 'N/A'} °C
+- 💧 Humidity: ${latest.humidity ?? 'N/A'} %
+- 🌿 Soil Moisture (Analog): ${latest.moistureAnalog ?? 'N/A'} %
+- 🚰 Moisture Status: ${latest.moistureDigital ?? 'N/A'}
+- 💡 Luminance: ${latest.luminance ?? 'N/A'} lux
+- ⏳ Flow Rate: ${latest.flowRate ?? 'N/A'} mL/min
+- 🌊 Total Water Flow: ${latest.totalFlow ?? 'N/A'} mL
 
-// Generate prompt from sensor data
-async function generatePrompt(message) {
-  const latest = await fetchSensorData();
+🧑‍🌾 User’s question: "${message}"
 
-  if (!latest) {
-    return {
-      error:
-        "❌ Couldn't retrieve sensor data. Please check your device connection.",
-      prompt: null,
-    };
-  }
-
-  const prompt = `
-📊 Current Plant Environment:
-- 🌡️ Temperature: ${formatSensorValue(latest.temperature, '°C')}
-- 💧 Humidity: ${formatSensorValue(latest.humidity, '%')}
-- 🌿 Soil Moisture: ${formatSensorValue(latest.moistureAnalog, '%')}
-- 🚰 Moisture Status: ${formatSensorValue(latest.moistureDigital)}
-- 💡 Light Level: ${formatSensorValue(latest.luminance, ' lux')}
-- ⏳ Water Flow Rate: ${formatSensorValue(latest.flowRate, ' mL/min')}
-- 🌊 Total Water Used: ${formatSensorValue(latest.totalFlow, ' mL')}
-
-👤 User Question: "${message}"
-
-Analyze the plant's health and environment. Prioritize:
-1. Immediate actions if critical conditions detected
-2. Troubleshooting if sensors show N/A
-3. General care advice based on available data
+Give actionable suggestions if needed. Keep the tone friendly and clear. NO MARKDOWN!
 `;
 
-  return { prompt, error: null };
-}
+    const geminiRes = await axios.post(
+      `${GEMINI_API_URL}?key=${process.env.GEMINI_API_KEY}`,
+      {
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }],
+          },
+        ],
+      }
+    );
 
-// Main function to handle Gemini responses
-async function sendMessageToGemini(message) {
-  try {
-    await initializeChat();
+    const result =
+      geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
-    const { prompt, error } = await generatePrompt(message);
-    if (error) return { response: error };
-
-    const result = await chatSession.sendMessage(prompt);
-    const response = result.response.text();
-
-    return { response };
+    return { response: result };
   } catch (error) {
-    console.error('Gemini communication error:', error);
+    console.error('Gemini error:', error.response?.data || error.message);
     return {
-      response: '⚠️ Temporary system issue. Please try again in a moment.',
+      error: '⚠ Failed to get a response from Gemini. Please try again later.',
     };
   }
 }
