@@ -104,18 +104,18 @@ async function fetchData(message) {
     });
 
     prompt = `
-📊 Latest Sensor Readings:
-- 🌡️ Temperature: ${latest.temperature ?? 'N/A'} °C
-- 💧 Humidity: ${latest.humidity ?? 'N/A'} %
-- 🌿 Soil Moisture (Analog): ${latest.moistureAnalog ?? 'N/A'} %
-- 🚰 Moisture Status: ${latest.moistureDigital ?? 'N/A'}
-- 💡 Luminance: ${latest.luminance ?? 'N/A'} lux
-- ⏳ Flow Rate: ${latest.flowRate ?? 'N/A'} mL/min
-- 🌊 Total Water Flow: ${latest.totalFlow ?? 'N/A'} mL
+Latest Sensor Readings:
+Temperature: ${latest.temperature ?? 'N/A'} °C
+Humidity: ${latest.humidity ?? 'N/A'} %
+Soil Moisture (Analog): ${latest.moistureAnalog ?? 'N/A'} %
+Moisture Status: ${latest.moistureDigital ?? 'N/A'}
+Luminance: ${latest.luminance ?? 'N/A'} lux
+Flow Rate: ${latest.flowRate ?? 'N/A'} mL/min
+Total Water Flow: ${latest.totalFlow ?? 'N/A'} mL
 
-🧑‍🌾 User’s question: "${message}"
+User’s question: "${message}"
 
-Give actionable suggestions if needed. Keep the tone friendly and clear. NO MARKDOWN!
+Give actionable suggestions if needed. Keep the tone friendly and clear. DO NOT USE MARKDOWN!
 `;
     return prompt;
   } catch (err) {
