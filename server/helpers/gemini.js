@@ -1,5 +1,3 @@
-this my gemini helper code
-
 const axios = require('axios');
 require('dotenv').config();
 
