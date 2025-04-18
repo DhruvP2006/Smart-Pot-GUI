@@ -115,7 +115,7 @@ Total Water Flow: ${latest.totalFlow ?? 'N/A'} mL
 
 User’s question: "${message}"
 
-Give actionable suggestions if needed. Keep the tone friendly and clear. DO NOT USE MARKDOWN!
+Give actionable suggestions if needed. Keep the tone friendly and clear. DO NOT USE MARKDOWN (That includes * - as well)!
 `;
     return prompt;
   } catch (err) {
@@ -127,6 +127,7 @@ Give actionable suggestions if needed. Keep the tone friendly and clear. DO NOT 
 
 async function sendMessageToGemini(message) {
   prompt = await fetchData(message);
+  console.log(prompt);
   if (prompt == 'Data Not Retrieved') {
     return {
       response:
@@ -149,7 +150,7 @@ async function sendMessageToGemini(message) {
 module.exports = { sendMessageToGemini };
 
 if (require.main === module) {
-  sendMessageToGemini('How is the plant?')
+  sendMessageToGemini('How is the plant status currently?')
     .then(console.log)
     .catch(console.error);
 }
