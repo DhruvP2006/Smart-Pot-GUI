@@ -8,6 +8,7 @@ const ai = new GoogleGenAI({
 
 const config = {
   responseMimeType: 'text/plain',
+  maxOutputTokens: 200,
   systemInstruction: [
     {
       text: `This is a Chat window for a ESP32 Project for Plant Sensor Data and Health. Give actionable suggestions if needed. Keep the tone friendly and clear. Do not use Markdown or suggest code!`,
@@ -18,11 +19,35 @@ const model = 'gemini-2.0-flash';
 const contents = [
   {
     role: 'user',
-    parts: [{ text: 'Hello' }],
+    parts: [
+      {
+        text: 'This is a Chat window for a ESP32 Project for Plant Sensor Data and Health. Give actionable suggestions if needed. Keep the tone friendly and clear. Do not use Markdown or suggest code!',
+      },
+    ],
   },
   {
     role: 'model',
-    parts: [{ text: 'Great to meet you. What would you like to know?' }],
+    parts: [{ text: 'Got it' }],
+  },
+  {
+    role: 'user',
+    parts: [
+      {
+        text: 'What can you say about the current state of plant?',
+      },
+    ],
+  },
+  {
+    role: 'model',
+    parts: [
+      {
+        text: `Based on the readings:
+Your plant is likely stressed and dry.
+Water it immediately and check why it's so dry.
+Consider moving it to a brighter spot.
+High temperature and humidity may also be an issue depending on plant type.`,
+      },
+    ],
   },
 ];
 
@@ -44,13 +69,17 @@ async function geminiResponseHandler() {
   //   console.log(chunk.text);
   // }
 
-  const response = await chat.sendMessageStream({
-    message: prompt,
-  });
+  // const response = await chat.sendMessageStream({
+  //   message: prompt,
+  // });
 
-  for await (const chunk of response2) {
-    console.debug('chat response 1 chunk: ', chunk.text);
-  }
+  // for await (const chunk of response2) {
+  //   console.debug('chat response 1 chunk: ', chunk.text);
+  // }
+
+  const response = await chat.sendMessage({ message: prompt });
+  console.log(response.text);
+  return response.text;
   // return;
 }
 
@@ -87,7 +116,7 @@ async function fetchData(message) {
 
 Give actionable suggestions if needed. Keep the tone friendly and clear. NO MARKDOWN!
 `;
-  return prompt;
+  // return prompt;
 }
 // }
 
@@ -100,8 +129,8 @@ async function sendMessageToGemini(message) {
     };
   } else {
     try {
-      geminiResponseHandler();
-      // return { response: result };
+      result = geminiResponseHandler();
+      return { response: result };
     } catch (error) {
       console.error('Gemini error:', error.response?.data || error.message);
       return {
