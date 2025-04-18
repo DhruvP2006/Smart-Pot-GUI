@@ -57,6 +57,7 @@ Based on the above sensor data, respond with helpful insights about the plant’
       }
     );
 
+    console.log(prompt);
     const result =
       geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 
