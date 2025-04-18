@@ -22,7 +22,7 @@ const ChatBot = () => {
     try {
       // 🔹 Step 1: Fetch the latest ESP32 sensor data
       const sensorRes = await fetch(
-        `${process.env.REACT_APP_BACKEND_URL}api/data`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/data`,
         {
           credentials: "include",
         }
@@ -39,7 +39,7 @@ Using this data, answer the following question: "${input}"
     `;
 
       // 🔹 Step 3: Send to Gemini
-      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}api/chat`, {
+      const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
