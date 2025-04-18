@@ -9,7 +9,7 @@ const Slider = () => {
   useEffect(() => {
     // Optional: fetch current threshold from server on mount
     axios
-      .get("http://localhost:8080/api/sensors/threshold")
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/sensors/threshold`)
       .then((res) => {
         if (res.data.moistureThreshold !== undefined) {
           setMoisture(res.data.moistureThreshold);
@@ -23,9 +23,12 @@ const Slider = () => {
     setMoisture(value);
 
     try {
-      await axios.post("http://localhost:8080/api/sensors/threshold", {
-        moistureThreshold: value,
-      });
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_URL}/api/sensors/threshold`,
+        {
+          moistureThreshold: value,
+        }
+      );
       setStatus("✅ Threshold updated!");
     } catch (err) {
       console.error("❌ Error sending threshold:", err);
