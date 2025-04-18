@@ -24,7 +24,7 @@ function Login() {
         toast.error(res.error);
       } else {
         setData({ email: "", password: "" });
-        navigate("/");
+        navigate("/home");
       }
     } catch (err) {
       console.error(err);

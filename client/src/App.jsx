@@ -15,7 +15,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const location = useLocation();
-  const hideNavbarRoutes = ["/login", "/register"];
+  const hideNavbarRoutes = ["/login", "/register", "/"];
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
@@ -23,11 +23,11 @@ function App() {
       {!shouldHideNavbar && <Navbar />}
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <Routes>
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/chat" element={<ChatBot />} />
-        <Route path="/" element={<Home />} />
+        <Route path="/home" element={<Home />} />
       </Routes>
     </>
   );

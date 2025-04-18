@@ -16,7 +16,7 @@ function Navbar() {
         ☰
       </button>
       <div className={`${styles.links} ${isOpen ? styles.show : ""}`}>
-        <Link to="/" onClick={() => setIsOpen(false)}>
+        <Link to="/home" onClick={() => setIsOpen(false)}>
           Home
         </Link>
         {/* <Link to="/Register" onClick={() => setIsOpen(false)}>
