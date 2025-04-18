@@ -7,7 +7,7 @@ const handleGeminiChat = async (req, res) => {
 
   if (!message) return res.status(400).json({ error: 'Message is required.' });
 
-  const result = await sendMessageToGemini('user', message);
+  const result = await sendMessageToGemini(message);
 
   if (result.error) {
     return res.status(500).json({ error: result.error });

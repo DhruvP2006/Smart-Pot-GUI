@@ -1,6 +1,7 @@
-import { GoogleGenAI } from '@google/genai';
+// @ts-check
+const { GoogleGenAI } = require('@google/genai');
 const axios = require('axios');
-require('dotenv').config();
+require('dotenv').config({ path: './.env' });
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
@@ -84,25 +85,25 @@ async function geminiResponseHandler() {
 }
 
 async function fetchData(message) {
-  // try {
-  // Fetch latest Smart Pot sensor data
-  const sensorRes = await axios.get(`${process.env.BACKEND_URL}/api/data`);
+  try {
+    // Fetch latest Smart Pot sensor data
+    const sensorRes = await axios.get(`${process.env.BACKEND_URL}/api/data`);
 
-  const latest = Array.isArray(sensorRes.data) ? sensorRes.data[0] : null;
+    const latest = Array.isArray(sensorRes.data) ? sensorRes.data[0] : null;
 
-  console.log('Latest Smart Pot Data:', latest);
+    console.log('Latest Smart Pot Data:', latest);
 
-  if (!latest) {
-    prompt = 'Data Not Retrieved';
-  }
+    if (!latest) {
+      return 'Data Not Retrieved';
+    }
 
-  console.log('Sensor data debug:', {
-    temp: latest.temperature,
-    hum: latest.humidity,
-    moist: latest.moistureAnalog,
-  });
+    console.log('Sensor data debug:', {
+      temp: latest.temperature,
+      hum: latest.humidity,
+      moist: latest.moistureAnalog,
+    });
 
-  prompt = `
+    prompt = `
 📊 Latest Sensor Readings:
 - 🌡️ Temperature: ${latest.temperature ?? 'N/A'} °C
 - 💧 Humidity: ${latest.humidity ?? 'N/A'} %
@@ -116,12 +117,16 @@ async function fetchData(message) {
 
 Give actionable suggestions if needed. Keep the tone friendly and clear. NO MARKDOWN!
 `;
-  // return prompt;
+    return prompt;
+  } catch (err) {
+    console.error('Fetch error:', err);
+    return 'Data Not Retrieved';
+  }
 }
 // }
 
 async function sendMessageToGemini(message) {
-  fetchData(message);
+  prompt = await fetchData(message);
   if (prompt == 'Data Not Retrieved') {
     return {
       response:
@@ -129,7 +134,7 @@ async function sendMessageToGemini(message) {
     };
   } else {
     try {
-      result = geminiResponseHandler();
+      const result = await geminiResponseHandler();
       return { response: result };
     } catch (error) {
       console.error('Gemini error:', error.response?.data || error.message);
@@ -142,3 +147,9 @@ async function sendMessageToGemini(message) {
 }
 
 module.exports = { sendMessageToGemini };
+
+if (require.main === module) {
+  sendMessageToGemini('How is the plant?')
+    .then(console.log)
+    .catch(console.error);
+}
