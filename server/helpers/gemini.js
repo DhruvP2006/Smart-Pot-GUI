@@ -4,6 +4,13 @@ require('dotenv').config();
 const GEMINI_API_URL =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent';
 
+// Helper function to properly handle missing/empty data
+function formatSensorValue(value, unit = '') {
+  return value === undefined || value === null || value === ''
+    ? 'N/A'
+    : `${value}${unit}`;
+}
+
 async function sendMessageToGemini(userId, message) {
   try {
     // Fetch latest Smart Pot sensor data
@@ -13,36 +20,53 @@ async function sendMessageToGemini(userId, message) {
         : 'https://smart-pot-l9l9.onrender.com/api/data'
     );
 
-    const latest = Array.isArray(sensorRes.data) ? sensorRes.data[0] : null;
+    // Ensure we have a proper data object
+    const latest = Array.isArray(sensorRes.data)
+      ? sensorRes.data[0]
+      : typeof sensorRes.data === 'object'
+      ? sensorRes.data
+      : {};
 
     console.log('Latest Smart Pot Data:', latest);
 
-    if (!latest) {
+    // Check if we got any usable data
+    const hasData = Object.values(latest).some(
+      (val) => val !== undefined && val !== null && val !== ''
+    );
+
+    if (!hasData) {
       return {
         response:
-          "❌ Sorry, I couldn't retrieve your sensor data. Please check if the device is online.",
+          '❌ No recent sensor data available. Please check:\n' +
+          '1. Is your Smart Pot powered on?\n' +
+          '2. Is it connected to WiFi?\n' +
+          '3. Try restarting the device if problems persist.',
       };
     }
 
-    console.log('Sensor data debug:', {
-      temp: latest.temperature,
-      hum: latest.humidity,
-      moist: latest.moistureAnalog,
-    });
-
     const prompt = `
 📊 Latest Sensor Readings:
-- 🌡️ Temperature: ${latest.temperature ?? 'N/A'} °C
-- 💧 Humidity: ${latest.humidity ?? 'N/A'} %
-- 🌿 Soil Moisture (Analog): ${latest.moistureAnalog ?? 'N/A'} %
-- 🚰 Moisture Status: ${latest.moistureDigital ?? 'N/A'}
-- 💡 Luminance: ${latest.luminance ?? 'N/A'} lux
-- ⏳ Flow Rate: ${latest.flowRate ?? 'N/A'} mL/min
-- 🌊 Total Water Flow: ${latest.totalFlow ?? 'N/A'} mL
+- 🌡️ Temperature: ${formatSensorValue(latest.temperature, '°C')}
+- 💧 Humidity: ${formatSensorValue(latest.humidity, '%')}
+- 🌿 Soil Moisture (Analog): ${formatSensorValue(latest.moistureAnalog, '%')}
+- 🚰 Moisture Status: ${formatSensorValue(latest.moistureDigital)}
+- 💡 Luminance: ${formatSensorValue(latest.luminance, ' lux')}
+- ⏳ Flow Rate: ${formatSensorValue(latest.flowRate, ' mL/min')}
+- 🌊 Total Water Flow: ${formatSensorValue(latest.totalFlow, ' mL')}
 
-🧑‍🌾 User’s question: "${message}"
+🧑‍🌾 User's question: "${message}"
 
-Based on the above sensor data, respond with helpful insights about the plant’s health. Give actionable suggestions if needed. Keep the tone friendly and clear.
+Please analyze the plant's health based on the available sensor data. Follow these guidelines:
+1. First mention any missing data (shown as N/A)
+2. For available data:
+   - Moisture: "Dry" = needs water, "Wet" = sufficient
+   - Luminance: <100 lux = low, 100-1000 = moderate, >1000 = bright
+   - Temperature: >30°C may need attention
+3. Provide specific care suggestions based on current readings
+4. If critical data is missing, suggest troubleshooting steps
+5. Keep responses friendly, concise, and actionable
+
+Important: If soil moisture is "Dry" or <20%, recommend watering immediately!
 `;
 
     const geminiRes = await axios.post(
@@ -64,7 +88,9 @@ Based on the above sensor data, respond with helpful insights about the plant’
   } catch (error) {
     console.error('Gemini error:', error.response?.data || error.message);
     return {
-      error: '⚠️ Failed to get a response from Gemini. Please try again later.',
+      response:
+        '⚠️ I encountered an issue processing your request. ' +
+        'Please try again later or check your device connection.',
     };
   }
 }
