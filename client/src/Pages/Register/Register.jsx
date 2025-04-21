@@ -8,19 +8,25 @@ function Register() {
   const navigate = useNavigate();
   const [data, setData] = useState({
     name: "",
+    plantName: "",
     email: "",
     password: "",
   });
 
   const registerUser = async (e) => {
     e.preventDefault();
-    const { name, email, password } = data;
+    const { name, plantName, email, password } = data;
     try {
-      const response = await axios.post("/register", { name, email, password });
+      const response = await axios.post("/register", {
+        name,
+        plantName,
+        email,
+        password,
+      });
       if (response.data.error) {
         toast.error(response.data.error);
       } else {
-        setData({ name: "", email: "", password: "" });
+        setData({ name: "", plantName: "", email: "", password: "" });
         toast.success("Registration successful. Welcome!");
         navigate("/login");
       }
@@ -41,6 +47,13 @@ function Register() {
             className={styles.input}
             value={data.name}
             onChange={(e) => setData({ ...data, name: e.target.value })}
+          />
+          <input
+            type="text"
+            placeholder="Enter Plant`s Name"
+            className={styles.input}
+            value={data.name}
+            onChange={(e) => setData({ ...data, plantName: e.target.value })}
           />
           <input
             type="email"

@@ -10,10 +10,14 @@ const test = (req, res) => {
 // Register Endpoint
 const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, plantName, email, password } = req.body;
 
     if (!name) {
       return res.status(400).json({ error: 'Name is required' });
+    }
+
+    if (!plantName) {
+      return res.status(400).json({ error: 'Plant Name is required' });
     }
 
     if (!password || password.length < 6) {
@@ -31,6 +35,7 @@ const registerUser = async (req, res) => {
 
     const user = await User.create({
       name,
+      plantName,
       email,
       password: hashedPassword,
     });
