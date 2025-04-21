@@ -45,6 +45,10 @@ exports.postSensorData = async (req, res) => {
     if (
       temperature === undefined ||
       humidity === undefined ||
+      humidity < 0 ||
+      humidity > 100 ||
+      moistureAnalog < 0 ||
+      moistureAnalog > 100 ||
       moistureAnalog === undefined ||
       moistureDigital === undefined ||
       luminance === undefined ||
