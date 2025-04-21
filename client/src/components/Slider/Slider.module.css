@@ -1,6 +1,6 @@
 .moistureContainer {
-  width: 25vw; /* Increased width */
-  height: 22vh; /* Increased height */
+  height: 80%; /* Increased height */
+  width: 80%; /* Increased width */
   border-radius: 20px;
   display: flex;
   flex-direction: column;

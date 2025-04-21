@@ -1,6 +1,6 @@
 .box {
-  width: 25vw; /* Increased width */
-  height: 22vh; /* Increased height */
+  height: 80%; /* Increased height */
+  width: 80%; /* Increased width */
   border-radius: 20px;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;

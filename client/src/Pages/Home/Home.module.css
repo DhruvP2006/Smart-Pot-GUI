@@ -1,10 +1,26 @@
 .home {
-  height: 100vh;
+  min-height: 100vh;
   max-width: 100vw;
   margin: 0 auto;
   background-color: #caf0f8;
   display: grid;
   place-items: center;
+  justify-content: center;
+  align-items: center;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 20px;
+}
+
+@media screen and (min-width: 500px) and (max-width: 800px) {
+  .home {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .home {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
 }
