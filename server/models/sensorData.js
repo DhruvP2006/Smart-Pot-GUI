@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const sensorSchema = new mongoose.Schema({
   temperature: Number,
-  humidity: Number,
-  moistureAnalog: Number,
+  humidity: { type: Number, min: 0, max: 100 },
+  moistureAnalog: { type: Number, min: 0, max: 100 },
   moistureDigital: String,
-  luminance: Number,
+  luminance: { type: Number, min: 0, max: 100 },
   flowRate: Number,
   totalFlow: Number,
   timestamp: { type: Date, default: Date.now },
