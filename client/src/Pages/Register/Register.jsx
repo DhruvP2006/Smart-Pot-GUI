@@ -52,7 +52,7 @@ function Register() {
             type="text"
             placeholder="Enter Plant`s Name"
             className={styles.input}
-            value={data.name}
+            value={data.plantName}
             onChange={(e) => setData({ ...data, plantName: e.target.value })}
           />
           <input
