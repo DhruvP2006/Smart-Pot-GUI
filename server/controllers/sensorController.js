@@ -106,7 +106,7 @@ exports.postSensorData = async (req, res) => {
     );
 
     // 🔹 Save for graph (every 15 mins)
-    if (currentTime - lastSavedTime >= 15 * 60 * 1000) {
+    if (currentTime - lastSavedTime >= 1 * 30 * 1000) {
       await SensorData.create({
         temperature,
         humidity,
