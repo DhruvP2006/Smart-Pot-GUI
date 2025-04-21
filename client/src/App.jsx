@@ -8,6 +8,7 @@ import axios from "axios";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 
 console.log("REACT_APP_BACKEND_URL:", process.env.REACT_APP_BACKEND_URL);
 
@@ -22,6 +23,7 @@ function App() {
   return (
     <div>
       <Analytics />
+      <SpeedInsights />
       {!shouldHideNavbar && <Navbar />}
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <Routes>
