@@ -7,6 +7,7 @@ import ChatBot from "./Pages/ChatBot/ChatBot.jsx";
 import axios from "axios";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
 
 console.log("REACT_APP_BACKEND_URL:", process.env.REACT_APP_BACKEND_URL);
 
@@ -19,7 +20,8 @@ function App() {
   const shouldHideNavbar = hideNavbarRoutes.includes(location.pathname);
 
   return (
-    <>
+    <div>
+      <Analytics />
       {!shouldHideNavbar && <Navbar />}
       <Toaster position="bottom-right" toastOptions={{ duration: 2000 }} />
       <Routes>
@@ -30,7 +32,7 @@ function App() {
 
         <Route path="/home" element={<Home />} />
       </Routes>
-    </>
+    </div>
   );
 }
 
