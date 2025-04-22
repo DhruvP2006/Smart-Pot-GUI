@@ -5,7 +5,7 @@ const sensorSchema = new mongoose.Schema({
   humidity: { type: Number, min: 0, max: 100 },
   moistureAnalog: { type: Number, min: 0, max: 100 },
   moistureDigital: String,
-  luminance: { type: Number, min: 0, max: 100 },
+  luminance: { type: Number, min: 0 },
   flowRate: Number,
   totalFlow: Number,
   timestamp: { type: Date, default: Date.now },

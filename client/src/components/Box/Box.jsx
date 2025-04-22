@@ -32,7 +32,7 @@ const sensorLabels = {
   moistureDigital: "Soil Moisture",
   flowRate: "Flow Rate (mL/min)",
   totalFlow: "Water Consumed (mL)",
-  luminance: "Luminance (%)",
+  luminance: "Luminance (Lux)",
 };
 
 const Box = ({ type, onOpenGraph }) => {
