@@ -110,7 +110,6 @@ exports.postSensorData = async (req, res) => {
       { upsert: true, new: true }
     );
 
-    // 🔹 Save for graph (every 15 mins)
     if (currentTime - lastSavedTime >= 1 * 30 * 1000) {
       await SensorData.create({
         temperature,
