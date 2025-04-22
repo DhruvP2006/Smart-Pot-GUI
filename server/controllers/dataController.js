@@ -15,7 +15,7 @@ exports.postSensorData = async (req, res) => {
 // 🔹 Get Latest Sensor Data
 exports.getLatestData = async (req, res) => {
   try {
-    const data = await SensorData.find().sort({ timestamp: -1 }).limit(1);
+    const data = await SensorData.find();
     res.json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
