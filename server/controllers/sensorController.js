@@ -52,7 +52,8 @@ exports.postSensorData = async (req, res) => {
       moistureAnalog === undefined ||
       moistureDigital === undefined ||
       luminance === undefined ||
-      flowRate === undefined
+      flowRate === undefined ||
+      flowrate > 1000
     ) {
       return res.status(400).json({ error: 'Missing required sensor data' });
     }

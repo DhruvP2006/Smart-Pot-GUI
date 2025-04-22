@@ -97,12 +97,6 @@ async function fetchData(message) {
       return 'Data Not Retrieved';
     }
 
-    console.log('Sensor data debug:', {
-      temp: latest.temperature,
-      hum: latest.humidity,
-      moist: latest.moistureAnalog,
-    });
-
     prompt = `
 Latest Sensor Readings:
 Temperature: ${latest.temperature ?? 'N/A'} °C
@@ -112,6 +106,7 @@ Moisture Status: ${latest.moistureDigital ?? 'N/A'}
 Luminance: ${latest.luminance ?? 'N/A'} lux
 Flow Rate: ${latest.flowRate ?? 'N/A'} mL/min
 Total Water Flow: ${latest.totalFlow ?? 'N/A'} mL
+Plants Name: Tulsi
 
 User’s question: "${message}"
 
